@@ -14,7 +14,7 @@
       <img src="https://shields.io" alt="Blog de Joss">
     </a>
     <a href="https://youtube.com">
-      <img src="https://shields.io" alt="YouTube">
+      <img src="https://www.youtube.com/@josspip?sub_confirmation=1" alt="YouTube">
     </a>
   </p>
 </div>
