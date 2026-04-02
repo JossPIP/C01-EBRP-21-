@@ -1,6 +1,6 @@
 <div align="center">
   <!-- Cabecera Visual -->
-  <img src="https://vercel.app🚀&fontSize=70" width="100%" />
+  <img src="src/logo.png 🚀&fontSize=70" width="100%" />
 
   <h1>Profesor de Innovación Pedagógica</h1>
   
