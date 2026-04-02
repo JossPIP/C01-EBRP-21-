@@ -1,20 +1,60 @@
 <div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+  <!-- Cabecera Visual -->
+  <img src="https://vercel.app🚀&fontSize=70" width="100%" />
+
+  <h1>Profesor de Innovación Pedagógica</h1>
+  
+  <p align="center">
+    <strong>"Transformando la educación a través de la tecnología y el pensamiento crítico."</strong>
+  </p>
+
+  <!-- Botones de Contacto y Blog -->
+  <p>
+    <a href="https://jossprofedeinnovacionpedagogica.blogspot.com/">
+      <img src="https://shields.io" alt="Blog de Joss">
+    </a>
+    <a href="https://youtube.com">
+      <img src="https://shields.io" alt="YouTube">
+    </a>
+  </p>
 </div>
 
-# Run and deploy your AI Studio app
+<hr>
 
-This contains everything you need to run your app locally.
+### 👨‍🏫 Perfil Profesional
+Soy un apasionado de la **Informática Educativa** y la **Innovación Pedagógica**. Mi misión es tender puentes entre las herramientas digitales de vanguardia y las necesidades reales del aula.
 
-View your app in AI Studio: https://ai.studio/apps/91e6c297-f946-444f-b70a-6b8f5870f1b8
+*   🔭 **Actualmente trabajando en:** Estrategias de IA generativa para docentes.
+*   📝 **Mi Blog:** Comparto reflexiones y recursos en [Joss Profe de Innovación Pedagógica](https://jossprofedeinnovacionpedagogica.blogspot.com/).
+*   🎙️ **Contenido:** Creador de contenido sobre TIC, metodologías activas y gestión del cambio digital.
 
-## Run Locally
+### 🛠️ Áreas de Especialidad
+<table align="center">
+  <tr>
+    <td align="center"><b>Innovación</b></td>
+    <td align="center"><b>Tecnología</b></td>
+    <td align="center"><b>Pedagogía</b></td>
+  </tr>
+  <tr>
+    <td>Design Thinking</td>
+    <td>Inteligencia Artificial</td>
+    <td>Metodologías Activas</td>
+  </tr>
+  <tr>
+    <td>Gamificación</td>
+    <td>Google Workspace</td>
+    <td>Evaluación Formativa</td>
+  </tr>
+</table>
 
-**Prerequisites:**  Node.js
+### 📈 Mis Estadísticas
+<p align="center">
+  <img src="https://vercel.app" alt="Stats" />
+</p>
 
+---
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+<div align="center">
+  <p><i>"El código es el nuevo lenguaje de la alfabetización docente."</i></p>
+  <img src="https://komarev.com" alt="Vistas" />
+</div>
