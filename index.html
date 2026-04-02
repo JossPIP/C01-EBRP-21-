@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Docente - Joss PIP</title>
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        /* Encapsulación estricta para no afectar el diseño de tu blog */
+        #simulador-docente-app {
+            all: initial;
+            font-family: system-ui, -apple-system, sans-serif;
+            display: block;
+            width: 100%;
+            min-height: 100vh;
+            background-color: #082f49; /* Fondo oscuro elegante */
+            color: #f4f4f5;
+            position: relative;
+            z-index: 10;
+            line-height: 1.5;
+        }
+        
+        #simulador-docente-app * {
+            box-sizing: border-box;
+        }
+
+        /* Utilidades personalizadas */
+        .sim-hidden { display: none !important; }
+        .sim-fade-in { animation: simFadeIn 0.4s ease-in-out; }
+        .sim-slide-up { animation: simSlideUp 0.5s ease-out; }
+        
+        @keyframes simFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes simSlideUp {
+            from { opacity: 0; transform: tranzincY(30px); }
+            to { opacity: 1; transform: tranzincY(0); }
+        }
+
+        /* Estilos de botones de radio personalizados */
+        .sim-radio-label {
+            display: flex;
+            align-items: center;
+            padding: 1.25rem;
+            border: 2px solid #e4e4e7;
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            background-color: white;
+            color: #3f3f46;
+        }
+        
+        .sim-radio-label:hover:not(.sim-disabled) {
+            border-color: rgba(14, 165, 233, 0.4);
+            background-color: #fafafa;
+            transform: tranzincY(-2px);
+        }
+
+        .sim-radio-input:checked + .sim-radio-label {
+            border-color: #0ea5e9;
+            background-color: rgba(14, 165, 233, 0.1);
+            box-shadow: 0 4px 15px -3px rgba(14, 165, 233, 0.2);
+        }
+
+        .sim-radio-letter {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.75rem;
+            border: 2px solid #d4d4d8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1.25rem;
+            font-weight: bold;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .sim-radio-input:checked + .sim-radio-label .sim-radio-letter {
+            background-color: #0ea5e9;
+            border-color: #0ea5e9;
+            color: white;
+        }
+
+        /* Estilos de feedback */
+        .sim-feedback-correct {
+            border-color: #10b981 !important;
+            background-color: #ecfdf5 !important;
+        }
+        .sim-feedback-correct .sim-radio-letter {
+            background-color: #059669 !important;
+            border-color: #059669 !important;
+            color: white !important;
+        }
+        
+        .sim-feedback-incorrect {
+            border-color: #f97316 !important;
+            background-color: rgba(249, 115, 22, 0.1) !important;
+        }
+        .sim-feedback-incorrect .sim-radio-letter {
+            background-color: #f97316 !important;
+            border-color: #f97316 !important;
+            color: white !important;
+        }
+        
+        .sim-disabled {
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<!-- CONTENEDOR PRINCIPAL -->
+<div id="simulador-docente-app">
+    <!-- Fondo radial sutil -->
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_var(--tw-gradient-stops))] from-[#0369a1] via-[#082f49] to-[#0c4a6e] -z-10"></div>
+    
+    <div class="max-w-6xl mx-auto p-4 sm:p-8 min-h-screen flex flex-col justify-center relative">
+        
+        <!-- VISTA: INICIO (PORTADA MEJORADA) -->
+        <div id="view-splash" class="w-full sim-slide-up">
+            <div class="bg-white/10 backdrop-blur-xl border border-white/10 rounded-[2.5rem] shadow-2xl overflow-hidden relative flex flex-col md:flex-row min-h-[600px]">
+                
+                <!-- LOGO JOSS PIP (Esquina superior derecha) -->
+                <div class="absolute top-6 right-6 z-30"> 
+                    <img src="src/logo.png" alt="Joss PIP Logo" class="w-20 h-20 object-contain rounded-full" /> 
+                </div>
+
+
+                <!-- Contenido de Texto (Izquierda) -->
+                <div class="p-10 md:p-16 flex-1 flex flex-col justify-center relative z-20 bg-gradient-to-r from-zinc-900 via-zinc-900/95 to-transparent">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#0ea5e9]/20 text-[#7dd3fc] font-bold text-sm mb-6 w-fit border border-[#0ea5e9]/30">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i> Edición Actualizada
+                    </div>
+                    
+                    <h1 class="text-5xl md:text-7xl font-extrabold text-white mb-6 tracking-tight leading-tight">
+                        Simulador <br/>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-emerald-400">Docente</span>
+                    </h1>
+                    
+                    <p class="text-lg md:text-xl text-zinc-300 mb-10 leading-relaxed max-w-lg">
+                        Evalúa tus conocimientos pedagógicos con nuestra casuística interactiva. Obtén retroalimentación inmediata y prepárate para el éxito en tu nombramiento.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button onclick="app.startExam()" class="px-8 py-4 bg-gradient-to-r from-[#0ea5e9] to-[#0284c7] hover:from-[#0ea5e9] hover:to-[#0284c7] text-white font-bold rounded-2xl transition-all text-lg flex items-center justify-center gap-3 shadow-xl shadow-[#0ea5e9]/30 group">
+                            <span>Iniciar Simulacro</span>
+                            <i data-lucide="arrow-right" class="w-6 h-6 group-hover:tranzinc-x-1 transition-transform"></i>
+                        </button>
+                        <button onclick="app.showModal('Instrucciones', '1. Tienes 1:30:00 horas.\n2. 50 preguntas de casuística.\n3. Puedes navegar libremente.\n4. Al finalizar tendrás retroalimentación detallada.')" class="px-8 py-4 bg-white/5 hover:bg-white/10 text-zinc-200 font-semibold rounded-2xl transition-all flex items-center justify-center gap-3 border border-white/10">
+                            <i data-lucide="info" class="w-5 h-5"></i>
+                            Instrucciones
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Imagen Llamativa (Derecha) -->
+                <div class="md:w-1/2 relative min-h-[300px] md:min-h-full hidden sm:block">
+                    <!-- Gradiente para difuminar el borde entre la imagen y el texto -->
+                    <div class="absolute inset-0 bg-gradient-to-r from-zinc-900 to-transparent z-10 w-32"></div>
+                    <!-- Imagen de Unsplash sobre educación/estudio -->
+                    <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=1000&auto=format&fit=crop" alt="Educación" class="absolute inset-0 w-full h-full object-cover opacity-80" />
+                </div>
+            </div>
+        </div>
+
+        <!-- VISTA: EXAMEN -->
+        <div id="view-exam" class="w-full max-w-4xl mx-auto sim-hidden sim-fade-in">
+            <header class="bg-white/5 backdrop-blur-md border border-white/10 p-5 rounded-3xl mb-8 flex flex-col sm:flex-row justify-between items-center gap-6 shadow-lg">
+                <div class="w-full sm:w-1/2">
+                    <div class="flex justify-between text-xs font-bold mb-3 tracking-wider text-[#7dd3fc] uppercase">
+                        <span id="progress-text">Pregunta 1 de 50</span>
+                        <span id="progress-pct">2%</span>
+                    </div>
+                    <div class="w-full bg-zinc-800 rounded-full h-3 overflow-hidden">
+                        <div id="progress-bar" class="bg-gradient-to-r from-[#0ea5e9] to-[#0284c7] h-full rounded-full transition-all duration-500" style="width: 2%"></div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-3 px-6 py-3 bg-zinc-800/80 border border-white/10 rounded-2xl shadow-inner">
+                        <i data-lucide="clock" class="w-6 h-6 text-[#f97316]"></i>
+                        <span id="timer-display" class="font-mono text-2xl font-bold text-white tracking-tighter">01:30:00</span>
+                    </div>
+                    <button onclick="app.restartExam(true)" class="p-3 bg-white/5 hover:bg-[#f97316]/20 text-zinc-300 hover:text-[#f97316] border border-white/10 rounded-2xl transition-all shadow-inner" title="Reiniciar Simulacro">
+                        <i data-lucide="rotate-ccw" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </header>
+
+            <div class="bg-white rounded-3xl p-8 sm:p-12 min-h-[500px] flex flex-col text-zinc-800 shadow-2xl relative">
+                <div class="mb-8 flex justify-end">
+                    <button id="btn-audio" onclick="app.toggleAudio()" class="inline-flex items-center gap-3 bg-[#f0f9ff] hover:bg-[#e0f2fe] text-[#0284c7] font-bold py-3 px-6 rounded-2xl transition-all border border-[#bae6fd] group">
+                        <i data-lucide="volume-2" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
+                        <span id="audio-text">Escuchar Análisis IA</span>
+                    </button>
+                </div>
+
+                <div class="flex-grow">
+                    <div id="question-context" class="mb-6 p-6 bg-zinc-50 rounded-2xl border border-zinc-200 text-zinc-600 whitespace-pre-line sim-hidden"></div>
+                    <h2 id="question-text" class="text-2xl sm:text-3xl font-bold text-[#082f49] mb-10 leading-tight">Cargando...</h2>
+                    
+                    <div id="options-container" class="grid gap-4 mb-8">
+                        <!-- Opciones dinámicas -->
+                    </div>
+
+                    <!-- Feedback Inmediato -->
+                    <div id="immediate-feedback" class="p-6 rounded-2xl border mb-8 sim-hidden sim-slide-up">
+                        <div class="flex items-center gap-3 mb-3">
+                            <i id="feedback-icon" data-lucide="check-circle-2" class="w-6 h-6"></i>
+                            <h3 id="feedback-title" class="text-lg font-bold"></h3>
+                        </div>
+                        <div id="feedback-correction" class="mb-4 p-4 bg-white/60 rounded-xl sim-hidden">
+                            <p class="text-sm font-bold text-zinc-500 mb-1 uppercase tracking-wider">La respuesta correcta es:</p>
+                            <p id="feedback-correct-text" class="text-zinc-800 font-medium"></p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-zinc-500 mb-1 uppercase tracking-wider">Explicación:</p>
+                            <p id="feedback-explanation" class="text-zinc-700 leading-relaxed"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-8 border-t border-zinc-100 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div class="flex gap-4 w-full sm:w-auto">
+                        <button id="btn-prev" onclick="app.prevQuestion()" class="flex-1 sm:flex-none px-8 py-4 bg-zinc-100 text-zinc-500 font-bold rounded-xl hover:bg-zinc-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                            <i data-lucide="chevron-left" class="w-5 h-5"></i> Anterior
+                        </button>
+                        <button id="btn-next" onclick="app.nextQuestion()" class="flex-1 sm:flex-none px-10 py-4 bg-[#0ea5e9] text-white font-bold rounded-xl hover:bg-[#0284c7] transition-all shadow-lg shadow-[#0ea5e9]/20 flex items-center justify-center gap-2">
+                            <span id="btn-next-text">Siguiente</span> <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                    <button onclick="app.finishExam()" class="w-full sm:w-auto px-6 py-4 text-[#f97316] font-bold border-2 border-[#f97316]\/20 rounded-xl hover:bg-[#f97316]\/10 transition-colors flex items-center justify-center gap-2">
+                        <i data-lucide="log-out" class="w-5 h-5"></i> Finalizar Examen
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VISTA: RESULTADOS -->
+        <div id="view-results" class="max-w-2xl mx-auto w-full text-center sim-hidden sim-slide-up">
+            <div class="bg-white rounded-3xl p-10 text-zinc-800 shadow-2xl">
+                <i data-lucide="award" class="w-20 h-20 text-[#0ea5e9] mx-auto mb-6"></i>
+                <h2 class="text-4xl font-bold text-[#082f49] mb-8">¡Simulacro Completado!</h2>
+                
+                <div class="grid grid-cols-2 gap-6 mb-10">
+                    <div class="p-6 bg-emerald-50 border border-emerald-100 rounded-2xl">
+                        <p class="text-xs text-emerald-600 font-black uppercase tracking-widest mb-1">Aciertos</p>
+                        <p id="res-correct" class="text-5xl font-black text-emerald-600">0</p>
+                    </div>
+                    <div class="p-6 bg-[#f97316]\/10 border border-[#f97316]\/20 rounded-2xl">
+                        <p class="text-xs text-[#f97316] font-black uppercase tracking-widest mb-1">Errores</p>
+                        <p id="res-incorrect" class="text-5xl font-black text-[#f97316]">0</p>
+                    </div>
+                </div>
+                
+                <div class="mb-10 p-10 bg-[#f0f9ff] rounded-3xl relative overflow-hidden border border-[#e0f2fe]">
+                    <div class="relative z-10">
+                        <p class="text-zinc-500 font-medium mb-2 uppercase text-sm tracking-widest">Puntaje Obtenido</p>
+                        <p id="res-score" class="text-7xl font-black text-[#0ea5e9] mb-3">0/50</p>
+                        <p id="res-pct" class="text-2xl font-bold text-[#0369a1]">0% de éxito</p>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button onclick="app.showReview()" class="flex-1 py-5 bg-[#082f49] text-white font-bold rounded-2xl hover:bg-black transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="list-checks" class="w-6 h-6"></i> Revisar Respuestas
+                    </button>
+                    <button onclick="app.restartExam(true)" class="flex-1 py-5 bg-[#0ea5e9] text-white font-bold rounded-2xl hover:bg-[#0284c7] transition-all flex items-center justify-center gap-2 shadow-xl shadow-[#0ea5e9]/20">
+                        <i data-lucide="rotate-ccw" class="w-6 h-6"></i> Nuevo Intento
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VISTA: REVISIÓN -->
+        <div id="view-review" class="max-w-4xl mx-auto w-full sim-hidden sim-fade-in">
+            <div class="bg-white/10 backdrop-blur-md p-6 rounded-3xl mb-8 flex justify-between items-center border border-white/10 sticky top-4 z-40 shadow-xl">
+                <h3 class="text-2xl font-bold text-white flex items-center gap-3">
+                    <i data-lucide="list-checks" class="w-8 h-8 text-[#0ea5e9]"></i> Detalle de Revisión
+                </h3>
+                <button onclick="app.showResults()" class="px-6 py-3 bg-white/10 text-white rounded-xl font-bold hover:bg-white/20 transition-all border border-white/10">
+                    Volver al Resumen
+                </button>
+            </div>
+            
+            <div id="review-list" class="space-y-8 pb-20">
+                <!-- Items de revisión generados por JS -->
+            </div>
+        </div>
+
+        <!-- MODAL PERSONALIZADO -->
+        <div id="custom-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#082f49]/80 backdrop-blur-sm sim-hidden">
+            <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl text-zinc-800 sim-slide-up">
+                <h3 id="modal-title" class="text-2xl font-bold text-[#082f49] mb-4">Título</h3>
+                <p id="modal-message" class="text-zinc-600 mb-8 whitespace-pre-line">Mensaje</p>
+                <div class="flex gap-4 justify-end">
+                    <button id="modal-btn-cancel" onclick="app.closeModal()" class="px-6 py-3 bg-zinc-100 text-zinc-600 font-bold rounded-xl hover:bg-zinc-200 transition-colors sim-hidden">
+                        Cancelar
+                    </button>
+                    <button id="modal-btn-confirm" class="px-6 py-3 bg-[#0ea5e9] text-white font-bold rounded-xl hover:bg-[#0284c7] transition-colors shadow-lg shadow-[#0ea5e9]/20">
+                        Aceptar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+const questions = [
+    {
+        "id": 26,
+        "text": "Los estudiantes de primer grado, con ayuda de la docente, desarrollan un proyecto para elaborar títeres y otros objetos a partir del uso de materiales reciclados. En este contexto, los estudiantes están escribiendo un listado de los materiales que van a necesitar. Durante el acompañamiento, la docente observa que han escrito de tres maneras diferentes la palabra “cajita”. ¿Por qué la última intervención de la docente es adecuada para que los estudiantes reflexionen sobre el sistema de escritura?",
+        "options": [
+            "A. Porque se centra en que los estudiantes señalen la palabra “cajita” en su listado y reconozcan que las sílabas están compuestas por una consonante y una vocal.",
+            "B. Porque se centra en promover que los estudiantes escriban de manera autónoma e identifiquen las escrituras no convencionales que puede tener la palabra “cajita”.",
+            "C. Porque se centra en que los estudiantes noten que la forma en que deben escribir la palabra “cajita” tiene que corresponder con la lectura de dicha palabra."
+        ],
+        "answer": 2,
+        "explanation": "La intervención es adecuada porque ayuda a los estudiantes a establecer la relación entre la oralidad (lectura) y la escritura, un paso fundamental en la apropiación del sistema de escritura."
+    },
+    {
+        "id": 27,
+        "text": "Los estudiantes de primer grado están elaborando fichas bibliográficas para registrar los títulos y el nombre del autor de los libros que han leído. ¿Cuál de las siguientes acciones pedagógicas es más adecuada?",
+        "options": [
+            "A. Entregar al estudiante la frase “La paloma” escrita en una hoja e indicarle cómo escribirla.",
+            "B. Pronunciar la frase “La paloma” realizando una pausa después de cada palabra y pedirle que la repita.",
+            "C. Escribir delante del estudiante frases como “La gallina” y “La tijera”, luego pedirle que identifique qué tienen en común con el título que escribió."
+        ],
+        "answer": 2,
+        "explanation": "Escribir frases similares permite al estudiante comparar y reflexionar sobre las regularidades del sistema de escritura, favoreciendo su aprendizaje autónomo."
+    },
+    {
+        "id": 28,
+        "context": "Texto A\nLos zoológicos son espacios que permiten proteger especies animales en peligro de extinción. Además, ofrecen a las personas la oportunidad de conocer animales que difícilmente podrían observar en su hábitat natural. Asimismo, los zoológicos contribuyen con investigaciones científicas que permiten comprender mejor el comportamiento de diversas especies.\n\nTexto B\nAlgunas personas cuestionan la existencia de los zoológicos porque consideran que los animales deberían vivir en libertad. Señalan que los animales pueden sufrir estrés al vivir en espacios reducidos y que muchas veces se les priva de desarrollar comportamientos propios de su especie.",
+        "text": "¿Cuál de los siguientes comentarios evidencia una reflexión sobre el contenido del texto A?",
+        "options": [
+            "A. Es necesario continuar fomentando que los zoológicos se centren en ser un refugio para el cuidado de los animales salvajes.",
+            "B. Los zoológicos resultan ser espacios donde se puede educar a las personas sobre los animales silvestres.",
+            "C. Los zoológicos vienen haciendo estudios sobre la vida de los animales salvajes."
+        ],
+        "answer": 0,
+        "explanation": "El comentario A refleja una toma de postura y una reflexión a partir de la información del texto A sobre el rol de protección de los zoológicos."
+    },
+    {
+        "id": 29,
+        "context": "Texto A\nLos zoológicos son espacios que permiten proteger especies animales en peligro de extinción. Además, ofrecen a las personas la oportunidad de conocer animales que difícilmente podrían observar en su hábitat natural. Asimismo, los zoológicos contribuyen con investigaciones científicas que permiten comprender mejor el comportamiento de diversas especies.\n\nTexto B\nAlgunas personas cuestionan la existencia de los zoológicos porque consideran que los animales deberían vivir en libertad. Señalan que los animales pueden sufrir estrés al vivir en espacios reducidos y que muchas veces se les priva de desarrollar comportamientos propios de su especie.",
+        "text": "¿Cuál de las siguientes preguntas es adecuada para reflexionar sobre el contenido del texto B?",
+        "options": [
+            "A. ¿Con qué finalidad se menciona que a las aves de los zoológicos se les cortan las alas?",
+            "B. Según el texto, ¿cuáles son los cuestionamientos que se les hace a los zoológicos?",
+            "C. ¿Por qué los zoológicos no brindan oportunidades de educar sobre los animales?"
+        ],
+        "answer": 0,
+        "explanation": "La pregunta A invita a reflexionar sobre el propósito del autor al incluir cierta información, lo cual es una tarea de reflexión sobre el contenido."
+    },
+    {
+        "id": 30,
+        "context": "Texto A\nLos zoológicos son espacios que permiten proteger especies animales en peligro de extinción. Además, ofrecen a las personas la oportunidad de conocer animales que difícilmente podrían observar en su hábitat natural. Asimismo, los zoológicos contribuyen con investigaciones científicas que permiten comprender mejor el comportamiento de diversas especies.\n\nTexto B\nAlgunas personas cuestionan la existencia de los zoológicos porque consideran que los animales deberían vivir en libertad. Señalan que los animales pueden sufrir estrés al vivir en espacios reducidos y que muchas veces se les priva de desarrollar comportamientos propios de su especie.",
+        "text": "¿Cuál de las siguientes preguntas se centra en que los estudiantes deduzcan información conjunta de los textos A y B?",
+        "options": [
+            "A. ¿Qué coincidencias han identificado en ambos textos?",
+            "B. ¿Qué información de ambos textos les resultó más difícil de comprender?",
+            "C. ¿Cuál de los textos presenta una opinión mejor sustentada?"
+        ],
+        "answer": 0,
+        "explanation": "Identificar coincidencias requiere que el estudiante contraste y deduzca información a partir de la lectura de ambos textos simultáneamente."
+    },
+    {
+        "id": 31,
+        "text": "¿Cuál de los estudiantes responde adecuadamente al identificar una idea contraria del texto B respecto al texto A?",
+        "options": [
+            "A. Carmen",
+            "B. Ana",
+            "C. Leo"
+        ],
+        "answer": 2,
+        "explanation": "Leo logra identificar correctamente la contraposición de ideas entre ambos textos."
+    },
+    {
+        "id": 32,
+        "context": "El caracol es un animal que posee una concha que le sirve de protección. Cuando percibe peligro, retrae su cuerpo dentro de la concha para protegerse. El caracol se desplaza lentamente gracias a un músculo llamado pie. Además, produce una sustancia viscosa que le permite deslizarse sobre distintas superficies. Los caracoles se alimentan principalmente de hojas y plantas.",
+        "text": "¿Cuál de las siguientes preguntas permite obtener información explícita del texto?",
+        "options": [
+            "A. ¿Con qué partes de su cuerpo se alimenta el caracol?",
+            "B. ¿Por qué el caracol se contrae al interior de su concha?",
+            "C. ¿Qué le permite al caracol deslizarse mejor sobre las hojas?"
+        ],
+        "answer": 2,
+        "explanation": "La pregunta C se responde directamente con información literal del texto ('produce una sustancia viscosa que le permite deslizarse')."
+    },
+    {
+        "id": 33,
+        "context": "El caracol es un animal que posee una concha que le sirve de protección. Cuando percibe peligro, retrae su cuerpo dentro de la concha para protegerse. El caracol se desplaza lentamente gracias a un músculo llamado pie. Además, produce una sustancia viscosa que le permite deslizarse sobre distintas superficies. Los caracoles se alimentan principalmente de hojas y plantas.",
+        "text": "¿Cuál de las siguientes acciones pedagógicas es más adecuada para ayudar al estudiante a interpretar el texto correctamente?",
+        "options": [
+            "A. Proponerle releer el tercer párrafo del texto para verificar la información.",
+            "B. Pedirle que señale los alimentos que comen los caracoles.",
+            "C. Subrayar las ideas del texto y explicarle cómo se alimenta el caracol."
+        ],
+        "answer": 0,
+        "explanation": "Releer una sección específica promueve que el estudiante verifique y construya su propia interpretación de manera autónoma."
+    },
+    {
+        "id": 34,
+        "text": "¿Por qué la intervención de la docente favorece la apropiación del sistema de escritura?",
+        "options": [
+            "A. Porque fomenta la identificación de sonidos de vocales y consonantes.",
+            "B. Porque brinda información sobre la letra inicial que se debe utilizar.",
+            "C. Porque propicia la comparación entre palabras con características similares."
+        ],
+        "answer": 2,
+        "explanation": "Comparar palabras con características similares ayuda a los niños a descubrir las reglas de correspondencia sonoro-gráfica por sí mismos."
+    },
+    {
+        "id": 35,
+        "text": "¿Cuál de los siguientes logros se evidencia en el texto de Christopher?",
+        "options": [
+            "A. La presencia de una secuencia cronológica para narrar los hechos.",
+            "B. El empleo de conectores de secuencia.",
+            "C. El uso del punto y aparte."
+        ],
+        "answer": 0,
+        "explanation": "El texto muestra una clara organización temporal de los eventos narrados."
+    },
+    {
+        "id": 36,
+        "text": "¿Por qué la retroalimentación realizada por la docente NO es adecuada?",
+        "options": [
+            "A. Porque debió incluir un mensaje motivador.",
+            "B. Porque debió subrayar las palabras con errores para que el estudiante las revise.",
+            "C. Porque debió priorizar errores de segmentación."
+        ],
+        "answer": 1,
+        "explanation": "La retroalimentación debe guiar al estudiante a descubrir sus errores, no solo señalarlos o corregirlos directamente."
+    },
+    {
+        "id": 37,
+        "text": "La docente revisa el texto narrativo que escribió un estudiante sobre una visita al mercado. En el texto, el estudiante relata los hechos siguiendo el orden en que ocurrieron. ¿Cuál de los siguientes logros se evidencia principalmente en el texto del estudiante?",
+        "options": [
+            "A. El uso adecuado de signos de puntuación.",
+            "B. La organización de los hechos siguiendo una secuencia temporal.",
+            "C. El empleo de conectores causales."
+        ],
+        "answer": 1,
+        "explanation": "Relatar los hechos en el orden en que ocurrieron demuestra el logro de organizar la narración en una secuencia temporal lógica."
+    },
+    {
+        "id": 38,
+        "text": "Durante una actividad de lectura, la docente pide a los estudiantes que expliquen con sus propias palabras lo que entendieron del texto leído. ¿A qué proceso de comprensión lectora corresponde principalmente esta actividad?",
+        "options": [
+            "A. Localización de información explícita.",
+            "B. Reflexión sobre la forma del texto.",
+            "C. Interpretación del contenido del texto."
+        ],
+        "answer": 2,
+        "explanation": "Explicar con propias palabras (parafrasear) requiere haber comprendido e interpretado el significado global del texto."
+    },
+    {
+        "id": 39,
+        "text": "Un docente pide a los estudiantes identificar la idea principal de un párrafo. ¿A qué nivel de comprensión lectora corresponde esta actividad?",
+        "options": [
+            "A. Comprensión literal.",
+            "B. Comprensión inferencial.",
+            "C. Comprensión crítica."
+        ],
+        "answer": 1,
+        "explanation": "Identificar la idea principal (cuando no está explícita) requiere deducir y sintetizar la información, lo cual es un proceso inferencial."
+    },
+    {
+        "id": 40,
+        "text": "Durante la producción de textos, la docente pide a los estudiantes revisar si su texto tiene sentido y si las ideas están organizadas. ¿A qué proceso de la escritura corresponde esta actividad?",
+        "options": [
+            "A. Planificación.",
+            "B. Textualización.",
+            "C. Revisión."
+        ],
+        "answer": 2,
+        "explanation": "Evaluar el sentido y la organización de las ideas ya escritas es parte fundamental del proceso de revisión."
+    },
+    {
+        "id": 41,
+        "context": "Los colibríes son aves pequeñas que se caracterizan por su capacidad de mantenerse suspendidas en el aire mientras baten rápidamente sus alas. Se alimentan principalmente del néctar de las flores. Gracias a su largo pico, pueden introducirse en las flores para obtener su alimento.",
+        "text": "Según el texto, ¿de qué se alimentan principalmente los colibríes?",
+        "options": [
+            "A. De insectos.",
+            "B. Del néctar de las flores.",
+            "C. De semillas."
+        ],
+        "answer": 1,
+        "explanation": "El texto indica explícitamente: 'Se alimentan principalmente del néctar de las flores'."
+    },
+    {
+        "id": 42,
+        "context": "Los colibríes son aves pequeñas que se caracterizan por su capacidad de mantenerse suspendidas en el aire mientras baten rápidamente sus alas. Se alimentan principalmente del néctar de las flores. Gracias a su largo pico, pueden introducirse en las flores para obtener su alimento.",
+        "text": "¿Qué característica de los colibríes se menciona en el texto?",
+        "options": [
+            "A. Pueden nadar largas distancias.",
+            "B. Tienen alas muy grandes.",
+            "C. Pueden mantenerse suspendidos en el aire."
+        ],
+        "answer": 2,
+        "explanation": "El texto menciona explícitamente su 'capacidad de mantenerse suspendidas en el aire'."
+    },
+    {
+        "id": 43,
+        "text": "Durante una lectura, un estudiante afirma: “Creo que el personaje está triste porque se quedó solo”. ¿A qué proceso de comprensión corresponde esta afirmación?",
+        "options": [
+            "A. Localizar información.",
+            "B. Hacer inferencias.",
+            "C. Reflexionar sobre la forma."
+        ],
+        "answer": 1,
+        "explanation": "Deducir el estado de ánimo y su causa a partir de indicios en el texto es una inferencia."
+    },
+    {
+        "id": 44,
+        "text": "Un docente propone que los estudiantes comparen dos textos que presentan opiniones diferentes sobre un mismo tema. ¿Con qué propósito realiza esta actividad?",
+        "options": [
+            "A. Promover la reflexión crítica sobre los textos.",
+            "B. Identificar palabras desconocidas.",
+            "C. Memorizar información."
+        ],
+        "answer": 0,
+        "explanation": "Comparar opiniones divergentes fomenta el análisis y la reflexión crítica sobre las posturas de los autores."
+    },
+    {
+        "id": 45,
+        "text": "Durante la escritura de un cuento, la docente pide a los estudiantes pensar quiénes serán los personajes y dónde ocurrirá la historia. ¿A qué etapa del proceso de escritura corresponde esta actividad?",
+        "options": [
+            "A. Planificación.",
+            "B. Revisión.",
+            "C. Edición."
+        ],
+        "answer": 0,
+        "explanation": "Definir personajes y escenarios antes de escribir es parte de la planificación del texto."
+    },
+    {
+        "id": 46,
+        "text": "Un estudiante escribe un texto informativo utilizando subtítulos para organizar las ideas. ¿Qué recurso textual está utilizando?",
+        "options": [
+            "A. Organización jerárquica de la información.",
+            "B. Uso de conectores.",
+            "C. Uso de metáforas."
+        ],
+        "answer": 0,
+        "explanation": "Los subtítulos sirven para estructurar y jerarquizar la información de manera lógica."
+    },
+    {
+        "id": 47,
+        "text": "La docente pide a los estudiantes explicar si están de acuerdo o no con la idea presentada en un texto. ¿A qué nivel de comprensión corresponde esta actividad?",
+        "options": [
+            "A. Literal.",
+            "B. Inferencial.",
+            "C. Crítico."
+        ],
+        "answer": 2,
+        "explanation": "Emitir un juicio de valor o expresar acuerdo/desacuerdo requiere una evaluación crítica del texto."
+    },
+    {
+        "id": 48,
+        "text": "Un estudiante relee su texto para corregir errores de ortografía. ¿A qué proceso de escritura corresponde esta acción?",
+        "options": [
+            "A. Planificación.",
+            "B. Revisión.",
+            "C. Publicación."
+        ],
+        "answer": 1,
+        "explanation": "La corrección de errores ortográficos y gramaticales es parte de la fase de revisión/edición."
+    },
+    {
+        "id": 49,
+        "text": "La docente pide a los estudiantes identificar las palabras que indican tiempo en una narración. ¿Qué aspecto del texto están analizando?",
+        "options": [
+            "A. Cohesión temporal.",
+            "B. Ortografía.",
+            "C. Vocabulario."
+        ],
+        "answer": 0,
+        "explanation": "Las palabras que indican tiempo (conectores temporales) aseguran la cohesión temporal del relato."
+    },
+    {
+        "id": 50,
+        "text": "Un docente pide a los estudiantes comparar las características de dos personajes de un cuento. ¿Qué proceso de comprensión se está promoviendo?",
+        "options": [
+            "A. Interpretación.",
+            "B. Evaluación crítica.",
+            "C. Recuperación de información."
+        ],
+        "answer": 0,
+        "explanation": "Comparar personajes requiere interpretar y relacionar información sobre ellos más allá de lo literal."
+    },
+    {
+        "id": 51,
+        "text": "Durante una actividad de lectura, los estudiantes deben explicar por qué ocurrió un hecho en la historia. ¿A qué tipo de comprensión corresponde?",
+        "options": [
+            "A. Literal.",
+            "B. Inferencial.",
+            "C. Crítica."
+        ],
+        "answer": 1,
+        "explanation": "Establecer relaciones de causa-efecto que no están explícitas es una inferencia."
+    },
+    {
+        "id": 52,
+        "text": "Un docente pide a los estudiantes identificar el propósito del autor al escribir un texto. ¿A qué nivel de comprensión corresponde?",
+        "options": [
+            "A. Literal.",
+            "B. Inferencial.",
+            "C. Crítico."
+        ],
+        "answer": 2,
+        "explanation": "Identificar la intención o propósito del autor requiere evaluar el texto en su conjunto, lo cual es propio del nivel crítico."
+    },
+    {
+        "id": 53,
+        "text": "La docente pide a los estudiantes escribir un texto para contar una experiencia personal. ¿Qué tipo de texto están produciendo?",
+        "options": [
+            "A. Narrativo.",
+            "B. Expositivo.",
+            "C. Argumentativo."
+        ],
+        "answer": 0,
+        "explanation": "Contar una experiencia implica relatar hechos en el tiempo, lo cual define a un texto narrativo."
+    },
+    {
+        "id": 54,
+        "text": "Un estudiante escribe un texto donde explica cómo cuidar el agua. ¿Qué tipo de texto es?",
+        "options": [
+            "A. Narrativo.",
+            "B. Expositivo.",
+            "C. Descriptivo."
+        ],
+        "answer": 1,
+        "explanation": "Explicar un tema de manera objetiva para informar (cómo cuidar el agua) corresponde a un texto expositivo."
+    },
+    {
+        "id": 55,
+        "text": "La docente pide a los estudiantes identificar la opinión del autor en un texto. ¿A qué tipo de texto corresponde generalmente esta característica?",
+        "options": [
+            "A. Narrativo.",
+            "B. Argumentativo.",
+            "C. Instructivo."
+        ],
+        "answer": 1,
+        "explanation": "Los textos argumentativos se caracterizan por presentar y defender la opinión o tesis del autor."
+    },
+    {
+        "id": 56,
+        "text": "Un docente pide a los estudiantes identificar la secuencia de pasos para realizar una actividad. ¿Qué tipo de texto se está analizando?",
+        "options": [
+            "A. Instructivo.",
+            "B. Narrativo.",
+            "C. Descriptivo."
+        ],
+        "answer": 0,
+        "explanation": "Los textos instructivos presentan pasos secuenciales para lograr un objetivo."
+    },
+    {
+        "id": 57,
+        "text": "Durante la lectura, los estudiantes predicen lo que ocurrirá después en la historia. ¿A qué proceso corresponde esta actividad?",
+        "options": [
+            "A. Anticipación.",
+            "B. Interpretación.",
+            "C. Reflexión."
+        ],
+        "answer": 0,
+        "explanation": "Predecir hechos futuros en la lectura es la estrategia de anticipación."
+    },
+    {
+        "id": 58,
+        "text": "Un docente pide a los estudiantes identificar palabras que conectan ideas dentro del texto. ¿Qué aspecto se está analizando?",
+        "options": [
+            "A. Cohesión.",
+            "B. Ortografía.",
+            "C. Léxico."
+        ],
+        "answer": 0,
+        "explanation": "Los conectores son elementos gramaticales que aseguran la cohesión textual."
+    },
+    {
+        "id": 59,
+        "text": "Un estudiante resume un texto leído. ¿A qué proceso de comprensión corresponde?",
+        "options": [
+            "A. Interpretación.",
+            "B. Síntesis de información.",
+            "C. Evaluación crítica."
+        ],
+        "answer": 1,
+        "explanation": "Resumir implica extraer y condensar las ideas principales, lo cual es una síntesis."
+    },
+    {
+        "id": 60,
+        "text": "Un docente pide a los estudiantes identificar el tema de un texto. ¿A qué nivel de comprensión corresponde?",
+        "options": [
+            "A. Literal.",
+            "B. Inferencial.",
+            "C. Crítico."
+        ],
+        "answer": 1,
+        "explanation": "El tema general de un texto suele deducirse de la lectura global, siendo un proceso inferencial."
+    },
+    {
+        "id": 61,
+        "text": "Los estudiantes escriben un texto y luego lo comparten con sus compañeros. ¿A qué etapa del proceso de escritura corresponde?",
+        "options": [
+            "A. Publicación.",
+            "B. Planificación.",
+            "C. Revisión."
+        ],
+        "answer": 0,
+        "explanation": "Compartir el texto final con los destinatarios es la etapa de publicación."
+    },
+    {
+        "id": 62,
+        "text": "La docente pide a los estudiantes revisar si sus textos tienen coherencia. ¿Qué aspecto se evalúa?",
+        "options": [
+            "A. Organización lógica de las ideas.",
+            "B. Ortografía.",
+            "C. Caligrafía."
+        ],
+        "answer": 0,
+        "explanation": "La coherencia se refiere al sentido global y a la organización lógica de las ideas en el texto."
+    },
+    {
+        "id": 63,
+        "text": "Un estudiante escribe un texto donde describe un paisaje. ¿Qué tipo de texto es?",
+        "options": [
+            "A. Descriptivo.",
+            "B. Narrativo.",
+            "C. Argumentativo."
+        ],
+        "answer": 0,
+        "explanation": "Un texto que detalla las características de un lugar, objeto o persona es descriptivo."
+    },
+    {
+        "id": 64,
+        "text": "Un docente pide identificar las causas de un problema descrito en el texto. ¿A qué proceso corresponde?",
+        "options": [
+            "A. Interpretación.",
+            "B. Localización de información.",
+            "C. Reflexión."
+        ],
+        "answer": 0,
+        "explanation": "Identificar relaciones lógicas como causa-efecto es parte de la interpretación del texto."
+    },
+    {
+        "id": 65,
+        "text": "Durante la lectura, los estudiantes opinan sobre el comportamiento de un personaje. ¿A qué nivel de comprensión corresponde?",
+        "options": [
+            "A. Literal.",
+            "B. Inferencial.",
+            "C. Crítico."
+        ],
+        "answer": 2,
+        "explanation": "Opinar y juzgar las acciones de los personajes requiere una evaluación crítica."
+    },
+    {
+        "id": 66,
+        "text": "Un docente pide a los estudiantes relacionar la información del texto con su experiencia personal. ¿A qué proceso corresponde?",
+        "options": [
+            "A. Reflexión.",
+            "B. Interpretación.",
+            "C. Recuperación de información."
+        ],
+        "answer": 0,
+        "explanation": "Vincular el texto con los saberes previos y vivencias personales es reflexionar sobre el contenido."
+    },
+    {
+        "id": 67,
+        "text": "Un estudiante identifica la moraleja de un cuento. ¿A qué proceso de comprensión corresponde?",
+        "options": [
+            "A. Inferencia.",
+            "B. Localización de información.",
+            "C. Identificación de vocabulario."
+        ],
+        "answer": 0,
+        "explanation": "La moraleja es una enseñanza implícita que debe deducirse, por lo tanto es una inferencia."
+    },
+    {
+        "id": 68,
+        "text": "Un docente pide a los estudiantes identificar la estructura de un texto narrativo. ¿Qué elementos buscan reconocer?",
+        "options": [
+            "A. Inicio, nudo y desenlace.",
+            "B. Título y subtítulo.",
+            "C. Introducción y conclusión."
+        ],
+        "answer": 0,
+        "explanation": "La estructura clásica de un texto narrativo es inicio, nudo y desenlace."
+    },
+    {
+        "id": 69,
+        "text": "Un estudiante explica el significado de una palabra según el contexto del texto. ¿A qué proceso corresponde?",
+        "options": [
+            "A. Interpretación del vocabulario.",
+            "B. Memorización.",
+            "C. Lectura literal."
+        ],
+        "answer": 0,
+        "explanation": "Deducir el significado por el contexto es interpretar el vocabulario."
+    },
+    {
+        "id": 70,
+        "text": "La docente pide a los estudiantes comparar dos opiniones sobre un tema. ¿A qué nivel de comprensión corresponde?",
+        "options": [
+            "A. Literal.",
+            "B. Inferencial.",
+            "C. Crítico."
+        ],
+        "answer": 2,
+        "explanation": "Comparar y evaluar opiniones divergentes es una tarea del nivel crítico."
+    },
+    {
+        "id": 71,
+        "text": "Los estudiantes identifican el problema principal de una historia. ¿A qué proceso corresponde?",
+        "options": [
+            "A. Interpretación.",
+            "B. Recuperación de información.",
+            "C. Reflexión."
+        ],
+        "answer": 0,
+        "explanation": "Identificar el conflicto o problema central requiere interpretar la trama de la historia."
+    },
+    {
+        "id": 72,
+        "text": "Un estudiante explica por qué un personaje tomó una decisión. ¿A qué proceso corresponde?",
+        "options": [
+            "A. Inferencia.",
+            "B. Memorización.",
+            "C. Identificación de vocabulario."
+        ],
+        "answer": 0,
+        "explanation": "Deducir las motivaciones no explícitas de un personaje es hacer una inferencia."
+    },
+    {
+        "id": 73,
+        "text": "La docente pide a los estudiantes opinar sobre el final de la historia. ¿A qué nivel corresponde?",
+        "options": [
+            "A. Literal.",
+            "B. Inferencial.",
+            "C. Crítico."
+        ],
+        "answer": 2,
+        "explanation": "Emitir una opinión o juicio sobre cómo termina la historia es comprensión crítica."
+    },
+    {
+        "id": 74,
+        "text": "Un estudiante identifica el mensaje principal de un texto. ¿A qué proceso corresponde?",
+        "options": [
+            "A. Interpretación.",
+            "B. Localización de información.",
+            "C. Identificación de palabras."
+        ],
+        "answer": 0,
+        "explanation": "Extraer el mensaje o enseñanza global requiere interpretar el sentido del texto."
+    },
+    {
+        "id": 75,
+        "text": "La docente pide a los estudiantes evaluar si los argumentos de un texto son convincentes. ¿A qué nivel corresponde esta actividad?",
+        "options": [
+            "A. Literal.",
+            "B. Inferencial.",
+            "C. Crítico."
+        ],
+        "answer": 2,
+        "explanation": "Evaluar la validez o fuerza de los argumentos es una habilidad netamente crítica."
+    }
+];
+</script>
+<script>
+// --- LÓGICA DE LA APLICACIÓN ---
+const app = {
+    state: {
+        view: 'splash',
+        currentIndex: 0,
+        answers: new Array(questions.length).fill(-1),
+        timeLeft: 1 * 3600 + 30 * 60, // 1:30:00
+        isSpeaking: false,
+        showFeedback: false,
+        timer: null
+    },
+
+    init() {
+        lucide.createIcons();
+        
+        const saved = localStorage.getItem('simuladorDocenteState');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            this.state.answers = parsed.answers || this.state.answers;
+            this.state.timeLeft = parsed.timeLeft || this.state.timeLeft;
+            this.state.currentIndex = parsed.currentIndex || 0;
+            this.state.view = parsed.view || 'splash';
+            
+            if (this.state.view === 'exam') {
+                this.startExam(true);
+            } else {
+                this.switchView(this.state.view);
+            }
+        }
+    },
+
+    saveState() {
+        if (this.state.view === 'exam') {
+            localStorage.setItem('simuladorDocenteState', JSON.stringify({
+                answers: this.state.answers,
+                timeLeft: this.state.timeLeft,
+                currentIndex: this.state.currentIndex,
+                view: this.state.view
+            }));
+        }
+    },
+
+    switchView(viewName) {
+        ['splash', 'exam', 'results', 'review'].forEach(v => {
+            document.getElementById(`view-${v}`).classList.add('sim-hidden');
+        });
+        document.getElementById(`view-${viewName}`).classList.remove('sim-hidden');
+        this.state.view = viewName;
+        window.scrollTo(0, 0);
+    },
+
+    formatTime(seconds) {
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
+        return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    },
+
+    startTimer() {
+        if (this.state.timer) clearInterval(this.state.timer);
+        
+        this.state.timer = setInterval(() => {
+            this.state.timeLeft--;
+            document.getElementById('timer-display').innerText = this.formatTime(this.state.timeLeft);
+            this.saveState();
+            
+            if (this.state.timeLeft <= 0) {
+                clearInterval(this.state.timer);
+                this.finishExam(true);
+            }
+        }, 1000);
+    },
+
+    startExam(isResume = false) {
+        this.switchView('exam');
+        if (!isResume) {
+            this.state.currentIndex = 0;
+            this.state.showFeedback = false;
+        }
+        this.renderQuestion();
+        this.startTimer();
+    },
+
+    renderQuestion() {
+        const q = questions[this.state.currentIndex];
+        
+        document.getElementById('progress-text').innerText = `Pregunta ${this.state.currentIndex + 1} de ${questions.length}`;
+        const pct = Math.round(((this.state.currentIndex + 1) / questions.length) * 100);
+        document.getElementById('progress-pct').innerText = `${pct}%`;
+        document.getElementById('progress-bar').style.width = `${pct}%`;
+
+        const ctxEl = document.getElementById('question-context');
+        if (q.context) {
+            ctxEl.innerText = q.context;
+            ctxEl.classList.remove('sim-hidden');
+        } else {
+            ctxEl.classList.add('sim-hidden');
+        }
+
+        document.getElementById('question-text').innerText = q.text;
+
+        const optsContainer = document.getElementById('options-container');
+        optsContainer.innerHTML = '';
+        
+        const currentAnswer = this.state.answers[this.state.currentIndex];
+        this.state.showFeedback = currentAnswer !== -1;
+
+        q.options.forEach((opt, idx) => {
+            const isSelected = currentAnswer === idx;
+            const isCorrect = idx === q.answer;
+            
+            let extraClasses = '';
+            if (this.state.showFeedback) {
+                if (isCorrect) extraClasses = 'sim-feedback-correct';
+                else if (isSelected) extraClasses = 'sim-feedback-incorrect';
+                else extraClasses = 'opacity-50';
+            }
+
+            const html = `
+                <label class="sim-radio-label ${extraClasses} ${this.state.showFeedback ? 'sim-disabled' : ''}">
+                    <input type="radio" name="q-option" class="sim-radio-input hidden" 
+                           ${isSelected ? 'checked' : ''} 
+                           ${this.state.showFeedback ? 'disabled' : ''}
+                           onchange="app.selectAnswer(${idx})">
+                    <span class="sim-radio-letter">${String.fromCharCode(65 + idx)}</span>
+                    <span class="text-lg font-medium leading-snug">${opt.substring(3)}</span>
+                </label>
+            `;
+            optsContainer.insertAdjacentHTML('beforeend', html);
+        });
+
+        const fbContainer = document.getElementById('immediate-feedback');
+        if (this.state.showFeedback) {
+            const isCorrect = currentAnswer === q.answer;
+            
+            fbContainer.className = `p-6 rounded-2xl border mb-8 sim-slide-up ${isCorrect ? 'bg-emerald-50 border-emerald-200' : 'bg-[#f97316]\/10 border-[#f97316]\/30'}`;
+            
+            document.getElementById('feedback-icon').setAttribute('data-lucide', isCorrect ? 'check-circle-2' : 'x-circle');
+            document.getElementById('feedback-icon').className = `w-6 h-6 ${isCorrect ? 'text-emerald-600' : 'text-[#f97316]'}`;
+            
+            document.getElementById('feedback-title').innerText = isCorrect ? '¡Muy bien! Respuesta correcta.' : 'Respuesta incorrecta.';
+            document.getElementById('feedback-title').className = `text-lg font-bold ${isCorrect ? 'text-emerald-800' : 'text-[#ea580c]'}`;
+            
+            const correctionDiv = document.getElementById('feedback-correction');
+            if (!isCorrect) {
+                document.getElementById('feedback-correct-text').innerText = q.options[q.answer];
+                correctionDiv.classList.remove('sim-hidden');
+            } else {
+                correctionDiv.classList.add('sim-hidden');
+            }
+            
+            document.getElementById('feedback-explanation').innerText = q.explanation;
+            fbContainer.classList.remove('sim-hidden');
+            lucide.createIcons();
+        } else {
+            fbContainer.classList.add('sim-hidden');
+        }
+
+        document.getElementById('btn-prev').disabled = this.state.currentIndex === 0;
+        document.getElementById('btn-next-text').innerText = this.state.currentIndex === questions.length - 1 ? 'Finalizar' : 'Siguiente';
+        
+        this.saveState();
+    },
+
+    selectAnswer(idx) {
+        if (this.state.showFeedback) return;
+        this.state.answers[this.state.currentIndex] = idx;
+        this.state.showFeedback = true;
+        this.renderQuestion();
+    },
+
+    nextQuestion() {
+        if (this.state.answers[this.state.currentIndex] === -1) {
+            this.showModal('Atención', 'Por favor, selecciona una alternativa antes de continuar.');
+            return;
+        }
+        
+        if (this.state.currentIndex < questions.length - 1) {
+            this.state.currentIndex++;
+            this.stopAudio();
+            this.renderQuestion();
+        } else {
+            this.finishExam();
+        }
+    },
+
+    prevQuestion() {
+        if (this.state.currentIndex > 0) {
+            this.state.currentIndex--;
+            this.stopAudio();
+            this.renderQuestion();
+        }
+    },
+
+    confirmFinish() {
+        const unanswered = this.state.answers.filter(a => a === -1).length;
+        const msg = unanswered > 0 
+            ? `Tienes ${unanswered} preguntas sin responder. ¿Seguro que deseas finalizar?`
+            : '¿Deseas concluir el simulacro y ver tus resultados?';
+            
+        this.showModal('Finalizar Examen', msg, () => this.finishExam());
+    },
+
+    finishExam(force = false) {
+        if (this.state.timer) clearInterval(this.state.timer);
+        this.stopAudio();
+        
+        const correct = this.state.answers.filter((a, i) => a === questions[i].answer).length;
+        const incorrect = questions.length - correct;
+        const pct = Math.round((correct / questions.length) * 100);
+        
+        document.getElementById('res-correct').innerText = correct;
+        document.getElementById('res-incorrect').innerText = incorrect;
+        document.getElementById('res-score').innerText = `${correct}/${questions.length}`;
+        document.getElementById('res-pct').innerText = `${pct}% de éxito`;
+        
+        this.switchView('results');
+        localStorage.removeItem('simuladorDocenteState');
+    },
+
+    restartExam(force = false) {
+        const resetAction = () => {
+            this.state.answers = new Array(questions.length).fill(-1);
+            this.state.timeLeft = 1 * 3600 + 30 * 60;
+            this.state.currentIndex = 0;
+            this.stopAudio();
+            localStorage.removeItem('simuladorDocenteState');
+            this.switchView('splash');
+        };
+
+        if (force) {
+            resetAction();
+        } else {
+            this.showModal('Reiniciar Examen', '¿Estás seguro de reiniciar? Se perderá todo tu progreso.', resetAction);
+        }
+    },
+
+    showReview() {
+        const list = document.getElementById('review-list');
+        list.innerHTML = '';
+        
+        questions.forEach((q, idx) => {
+            const userAns = this.state.answers[idx];
+            const isCorrect = userAns === q.answer;
+            const isUnanswered = userAns === -1;
+            
+            let borderClass = 'border-l-[#f97316]';
+            let badgeHtml = `<span class="px-4 py-1.5 bg-[#f97316]\/20 text-rose-700 text-xs font-bold rounded-full flex items-center gap-1"><i data-lucide="x-circle" class="w-4 h-4"></i> INCORRECTA</span>`;
+            
+            if (isCorrect) {
+                borderClass = 'border-l-emerald-500';
+                badgeHtml = `<span class="px-4 py-1.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full flex items-center gap-1"><i data-lucide="check-circle-2" class="w-4 h-4"></i> CORRECTA</span>`;
+            } else if (isUnanswered) {
+                borderClass = 'border-l-amber-500';
+                badgeHtml = `<span class="px-4 py-1.5 bg-amber-100 text-amber-700 text-xs font-bold rounded-full flex items-center gap-1"><i data-lucide="alert-circle" class="w-4 h-4"></i> SIN RESPONDER</span>`;
+            }
+
+            let optionsHtml = '';
+            q.options.forEach((opt, oIdx) => {
+                let optClass = "bg-zinc-50 text-zinc-600 border-zinc-200";
+                let iconHtml = '';
+                
+                if (oIdx === q.answer) {
+                    optClass = "bg-emerald-50 text-emerald-900 border-emerald-200 ring-2 ring-emerald-500/20";
+                    iconHtml = `<i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600 ml-auto shrink-0"></i>`;
+                } else if (oIdx === userAns) {
+                    optClass = "bg-[#f97316]\/10 text-[#c2410c] border-[#f97316]\/30";
+                    iconHtml = `<i data-lucide="x-circle" class="w-5 h-5 text-[#f97316] ml-auto shrink-0"></i>`;
+                }
+                
+                optionsHtml += `
+                    <div class="p-5 rounded-2xl text-base flex gap-4 border ${optClass}">
+                        <span class="font-bold shrink-0">${String.fromCharCode(65 + oIdx)})</span>
+                        <span class="font-medium">${opt.substring(3)}</span>
+                        ${iconHtml}
+                    </div>
+                `;
+            });
+
+            const html = `
+                <div class="bg-white p-8 rounded-3xl text-zinc-800 border-l-[12px] shadow-xl ${borderClass}">
+                    <div class="flex justify-between items-start mb-6">
+                        <p class="text-sm font-black text-zinc-400 uppercase tracking-widest">Pregunta ${idx + 1}</p>
+                        ${badgeHtml}
+                    </div>
+                    ${q.context ? `<div class="mb-6 p-4 bg-zinc-50 rounded-xl border border-zinc-200 text-sm text-zinc-600 whitespace-pre-line">${q.context}</div>` : ''}
+                    <p class="text-xl font-bold text-[#082f49] mb-8">${q.text}</p>
+                    <div class="space-y-4 mb-8">${optionsHtml}</div>
+                    <div class="bg-[#f0f9ff] p-6 rounded-2xl border border-[#e0f2fe]">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-2 text-[#0284c7] font-bold uppercase tracking-wider text-xs">
+                                <i data-lucide="book-open" class="w-4 h-4"></i> Retroalimentación Técnica
+                            </div>
+                            <button onclick="app.speakText('${q.explanation.replace(/'/g, "\\'")}')" class="text-[#0ea5e9] hover:text-[#0369a1] p-2 rounded-lg hover:bg-[#e0f2fe] transition-colors">
+                                <i data-lucide="volume-2" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                        <p class="text-zinc-700 leading-relaxed font-medium">${q.explanation}</p>
+                    </div>
+                </div>
+            `;
+            list.insertAdjacentHTML('beforeend', html);
+        });
+        
+        this.switchView('review');
+        lucide.createIcons();
+    },
+
+    showResults() {
+        this.switchView('results');
+    },
+
+    toggleAudio() {
+        if (this.state.isSpeaking) {
+            this.stopAudio();
+        } else {
+            const q = questions[this.state.currentIndex];
+            this.speakText(`Atención. Situación número ${this.state.currentIndex + 1}. El análisis pedagógico sugiere que: ${q.explanation}`);
+        }
+    },
+
+    stopAudio() {
+        if (window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+            this.state.isSpeaking = false;
+            const icon = document.getElementById('btn-audio').querySelector('i');
+            if(icon) {
+                icon.setAttribute('data-lucide', 'volume-2');
+                document.getElementById('audio-text').innerText = 'Escuchar Análisis IA';
+                lucide.createIcons();
+            }
+        }
+    },
+
+    speakText(text) {
+        if (!window.speechSynthesis) return;
+        this.stopAudio();
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        const voices = window.speechSynthesis.getVoices();
+        const bestVoice = voices.find(v => v.name.includes('Google') && v.lang.includes('es')) || voices.find(v => v.name.includes('Microsoft') && v.lang.includes('es')) || voices.find(v => v.name.includes('Natural') && v.lang.includes('es')) || voices.find(v => v.lang.includes('es-MX') || v.lang.includes('es-US')) || voices.find(v => v.lang.includes('es'));
+        if (bestVoice) utterance.voice = bestVoice;
+        utterance.lang = bestVoice ? bestVoice.lang : 'es-ES';
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        
+        utterance.onend = () => this.stopAudio();
+        
+        this.state.isSpeaking = true;
+        
+        if (this.state.view === 'exam') {
+            const icon = document.getElementById('btn-audio').querySelector('i');
+            if(icon) {
+                icon.setAttribute('data-lucide', 'volume-x');
+                document.getElementById('audio-text').innerText = 'Detener Audio';
+                lucide.createIcons();
+            }
+        }
+        
+        window.speechSynthesis.speak(utterance);
+    },
+
+    modalCallback: null,
+    
+    showModal(title, message, callback = null) {
+        document.getElementById('modal-title').innerText = title;
+        document.getElementById('modal-message').innerText = message;
+        
+        const btnCancel = document.getElementById('modal-btn-cancel');
+        if (callback) {
+            btnCancel.classList.remove('sim-hidden');
+            this.modalCallback = callback;
+        } else {
+            btnCancel.classList.add('sim-hidden');
+            this.modalCallback = null;
+        }
+        
+        document.getElementById('custom-modal').classList.remove('sim-hidden');
+    },
+
+    closeModal() {
+        document.getElementById('custom-modal').classList.add('sim-hidden');
+        this.modalCallback = null;
+    }
+};
+
+document.getElementById('modal-btn-confirm').addEventListener('click', () => {
+    app.closeModal();
+    if (app.modalCallback) app.modalCallback();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    app.init();
+    if (window.speechSynthesis) window.speechSynthesis.getVoices();
+});
+</script>
+</body>
+</html>
